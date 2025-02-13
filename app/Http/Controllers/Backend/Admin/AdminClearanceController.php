@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\ClearanceForm;
+use App\Models\Year;
+use App\Models\AcademicSession;
 use ZipArchive;
 
 class AdminClearanceController extends Controller
@@ -12,10 +14,30 @@ class AdminClearanceController extends Controller
     /**
      * Show the clearance forms page.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clearanceForms = ClearanceForm::with('student')->get();
-        return view('admin.clearance_form', compact('clearanceForms'));
+        $years = Year::all();
+        $sessions = AcademicSession::all();
+
+        // Get filter values
+        $selectedYear = $request->get('year_id');
+        $selectedSession = $request->get('session_id');
+
+        // Query clearance forms with optional filtering
+        $clearanceForms = ClearanceForm::with('student')
+            ->when($selectedYear, function ($query) use ($selectedYear) {
+                $query->whereHas('student', function ($studentQuery) use ($selectedYear) {
+                    $studentQuery->where('year_id', $selectedYear);
+                });
+            })
+            ->when($selectedSession, function ($query) use ($selectedSession) {
+                $query->whereHas('student', function ($studentQuery) use ($selectedSession) {
+                    $studentQuery->where('session_id', $selectedSession);
+                });
+            })
+            ->get();
+
+        return view('admin.clearance_form', compact('clearanceForms', 'years', 'sessions', 'selectedYear', 'selectedSession'));
     }
 
     /**

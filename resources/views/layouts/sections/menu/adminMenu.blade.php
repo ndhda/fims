@@ -74,12 +74,5 @@
           </a>
       </li>
 
-      <!-- Transactions -->
-      <li class="menu-item">
-          <a href="#" class="menu-link">
-              <i class="menu-icon tf-icons bx bx-transfer"></i>
-              <div>Transactions</div>
-          </a>
-      </li>
   </ul>
 </aside>

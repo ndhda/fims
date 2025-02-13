@@ -4,80 +4,120 @@ namespace App\Http\Controllers\Backend\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Models\Fee;
 use App\Models\Student;
 use App\Models\FeeCategory;
 use App\Models\Year;
+use App\Models\AcademicSession;
 use App\Models\Semester;
 use App\Models\Programme;
 use App\Models\FeeStatus;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\FeeReportExport;  // You may need to create an export class
-use PDF;  // F
+use Barryvdh\DomPDF\Facade\PDF;
+use ZipArchive;
+use Illuminate\Support\Facades\Storage;
 
 class AdminReportController extends Controller
 {
     public function index()
     {
         return view('admin.reports.index');
-        // // Provide necessary data for filters (semesters, years, categories, etc.)
-        // $semesters = Semester::all();
-        // $years = Year::all();
-        // $feeCategories = FeeCategory::all();
-        // $programmes = Programme::all();
-        // $students = Student::all();
 
-        // return view('admin.reports.index', compact('semesters', 'years', 'feeCategories', 'programmes', 'students'));
     }
-    // public function generateAdminReport(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'semester_id' => 'nullable|exists:semesters,id',
-    //         'year_id' => 'nullable|exists:year,year_id',
-    //         'fee_category_id' => 'nullable|exists:fee_category,fee_category_id',
-    //         'programme_id' => 'nullable|exists:programmes,id',
-    //         'student_id' => 'nullable|exists:students,student_id',
-    //         'fee_status_id' => 'nullable|in:Paid,Pending,Unpaid',
-    //     ]);
 
-    //     $query = Fee::query();
+    public function studentReport(Request $request)
+    {
+        // Fetch the programmes for the filter dropdown
+        $programmes = Programme::all();
 
-    //     if ($request->semester_id) {
-    //         $query->where('semester_id', $request->semester_id);
-    //     }
+        // Fetch students with the applied filters
+        $students = Student::with(['programme', 'faculty', 'fundingSource'])
+            ->when($request->filled('programme_id'), function ($query) use ($request) {
+                return $query->where('programme_id', $request->programme_id);
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                return $query->where('status', $request->status);
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                return $query->where('full_name', 'like', '%' . $request->search . '%');
+            })
+            ->paginate(10);
 
-    //     if ($request->year_id) {
-    //         $query->where('year_id', $request->year_id);
-    //     }
+        return view('admin.reports.student', compact('students', 'programmes'));
+    }
 
-    //     if ($request->fee_category_id) {
-    //         $query->where('fee_category_id', $request->fee_category_id);
-    //     }
+    public function downloadStudentReport(Request $request)
+    {
+        // Fetch the student data for the report (similar query as in the studentReport method)
+        $students = Student::with(['programme', 'faculty'])
+            ->when($request->input('programme'), function ($query) use ($request) {
+                return $query->where('programme_id', $request->input('programme'));
+            })
+            ->when($request->input('status'), function ($query) use ($request) {
+                return $query->where('status', $request->input('status'));
+            })
+            ->get();
 
-    //     if ($request->programme_id) {
-    //         $query->whereHas('student.programme', function ($q) use ($request) {
-    //             $q->where('programme_id', $request->programme_id);
-    //         });
-    //     }
+        // Create a zip archive
+        $zip = new ZipArchive();
+        $fileName = "student_report_" . time() . ".zip";
+        $zip->open(public_path($fileName), ZipArchive::CREATE);
 
-    //     if ($request->student_id) {
-    //         $query->where('student_id', $request->student_id);
-    //     }
+        foreach ($students as $student) {
+            // Write each student's report as a file within the ZIP
+            $content = "Full Name: {$student->full_name}\n";
+            $content .= "Matric Number: {$student->matric_num}\n";
+            $content .= "Programme: {$student->programme->programme_name}\n";
+            $content .= "Faculty: {$student->faculty->faculty_name}\n\n";
 
-    //     if ($request->fee_status_id) {
-    //         $query->where('fee_status_id', FeeStatus::where('status', $request->fee_status_id)->first()->id);
-    //     }
+            $zip->addFromString("{$student->matric_num}_report.txt", $content);
+        }
 
-    //     $fees = $query->get();
+        $zip->close();
 
-    //     // Generate PDF or Excel
-    //     if ($request->export == 'pdf') {
-    //         // Generate PDF report logic
-    //     } elseif ($request->export == 'excel') {
-    //         // Generate Excel report logic
-    //     }
+        // Return the generated zip file for download
+        return response()->download(public_path($fileName))->deleteFileAfterSend(true);
+    }
 
-    //     return view('admin.fees.report', compact('fees'));
-    // }
+    public function viewReport($studentId)
+    {
+        // Fetch student information
+        $student = Student::with([
+            'faculty',
+            'programme',
+            'programme.eduMode',
+            'semester',
+            'fundingSource'
+        ])->findOrFail($studentId);
+
+        // Fetch fees and transactions
+        $transactions = Fee::with(['feeCategory', 'amountPaid'])
+            ->where('student_id', $studentId)
+            ->get()
+            ->map(function ($fee) {
+                $paidAmount = $fee->amountPaid->sum('amount_paid');
+                return [
+                    'date' => $fee->created_at->format('Y-m-d'),
+                    'document' => $fee->invoice_num,
+                    'description' => $fee->feeCategory->fee_category_name,
+                    'charges' => $fee->total_amount,
+                    'payments' => $paidAmount,
+                    'balance' => $fee->total_amount - $paidAmount,
+                ];
+            });
+
+        // Calculate summary
+        $summary = [
+            'charges' => $transactions->sum('charges'),
+            'payments' => $transactions->sum('payments'),
+            'balance' => $transactions->sum('balance'),
+        ];
+
+        // Generate PDF
+        $pdf = PDF::loadView('admin.reports.view-student', compact('student', 'transactions', 'summary'));
+        return $pdf->stream('student_report.pdf');
+    }
 
 }

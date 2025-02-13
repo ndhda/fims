@@ -15,12 +15,6 @@
 
 @section('content')
     <div class="authentication-wrapper authentication-cover">
-        {{-- <!-- Logo -->
-        <a href="{{ url('/') }}" class="auth-cover-brand d-flex align-items-center gap-2">
-            <span class="app-brand-logo demo"><img width="40" src="{{ asset('assets/img/branding/logo.png') }}"></span>
-            <span class="app-brand-text demo text-heading fw-semibold">{{ config('variables.templateName') }}</span>
-        </a>
-        <!-- /Logo --> --}}
 
         <div class="authentication-inner row m-0">
             <!-- Left Section -->
@@ -73,14 +67,16 @@
                             @enderror
                         </div>
 
-                        <!-- Password -->
-                        <div class="form-floating form-floating-outline mb-5">
+                        <div class="mb-5">
                             <div class="form-password-toggle">
-                                <div class="input-group input-group-merge">
-                                    <input type="password" id="password" name="password"
-                                        class="form-control @error('password') is-invalid @enderror"
-                                        placeholder="••••••••" required >
-                                    <label for="password">Password</label>
+                                <div class="input-group input-group-merge @error('password') is-invalid @enderror">
+                                    <div class="form-floating form-floating-outline">
+                                        <input type="password" id="login-password"
+                                            class="form-control @error('password') is-invalid @enderror" name="password"
+                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                            aria-describedby="password" />
+                                        <label for="login-password">Password</label>
+                                    </div>
                                     <span class="input-group-text cursor-pointer"><i class="ri-eye-off-line"></i></span>
                                 </div>
                                 @error('password')
@@ -107,6 +103,12 @@
                         <!-- Login Button -->
                         <button class="btn btn-primary d-grid w-100">Sign in</button>
                     </form>
+
+                    <!-- Sign Up Link -->
+                    <div class="mt-3 text-center">
+                      <p>Don't have an account? <a href="{{ route('register') }}" class="btn btn-link">Sign Up</a></p>
+                  </div>
+                  
                 </div>
             </div>
             <!-- /Login -->

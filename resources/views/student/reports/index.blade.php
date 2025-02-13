@@ -27,44 +27,79 @@
 
 @section('content')
 
-<div class="container">
-    <h2>My Fee Reports</h2>
+@section('content')
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h4><strong>Fee Report</strong></h4>
 
-    <form action="{{ route('student.reports.generate') }}" method="POST">
-      @csrf
-      <select name="semester_id">
-          <option value="">Select Semester</option>
-          @foreach ($semesters as $semester)
-              <option value="{{ $semester->semester_id }}">{{ $semester->semester_name }}</option>
-          @endforeach
-      </select>
-      <button type="submit">View Report</button>
-    </form>
+      <hr>
 
+      <p>View your fee payment details throughout your studies.</p>
 
-    {{-- <table id="feeReportTable">
-        <thead>
-            <tr>
-                <th>Invoice No</th>
-                <th>Fee Category</th>
-                <th>Total Amount</th>
-                <th>Amount Paid</th>
-                <th>Balance</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($fees as $fee)
-            <tr>
-                <td>{{ $fee->invoice_num }}</td>
-                <td>{{ $fee->feeCategory->fee_category_name }}</td>
-                <td>{{ $fee->total_amount }}</td>
-                <td>{{ $fee->amountPaid->sum('amount_paid') }}</td>
-                <td>{{ $fee->amount_balance }}</td>
-                <td>{{ $fee->status }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table> --}}
+      <div class="d-flex justify-content-end">
+        <a href="{{ route('student.report.pdf') }}" class="btn btn-primary">Generate Report</a>
+      </div>
+
+      <div class="table-responsive mt-4">
+          <table class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Document No.</th>
+                      <th>Category</th>
+                      <th>Amount (BND)</th>
+                      <th>Paid (BND)</th>
+                      <th>Balance (BND)</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  @forelse ($fees as $fee)
+                      <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $fee['date'] }}</td>
+                          <td>{{ $fee['document_no'] }}</td>
+                          <td>{{ $fee['category'] }}</td>
+                          <td>{{ number_format($fee['amount_bnd'], 2) }}</td>
+                          <td>{{ number_format($fee['paid_bnd'], 2) }}</td>
+                          <td>{{ number_format($fee['balance_bnd'], 2) }}</td>
+                      </tr>
+                  @empty
+                      <tr>
+                          <td colspan="7" class="text-center">No fee records found.</td>
+                      </tr>
+                  @endforelse
+              </tbody>
+          </table>
+      </div>
+
+      @if (isset($summary))
+      <div style="margin-top: 50px;"></div>
+      <div class="mt-4 d-flex justify-content-end">
+        <!-- Summary Table -->
+        <table class="table table-bordered" style="width: auto;">
+            <thead>
+                <tr>
+                    <th colspan="3" style="background-color: #d3d3d3; text-align: center;">SUMMARY</th>
+                </tr>
+                <tr>
+                    <th class="cell-fit">AMOUNT (BND)</th>
+                    <th class="cell-fit">PAID (BND)</th>
+                    <th class="cell-fit">BALANCE (BND)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td class="text-center">{{ number_format($summary['total_amount'], 2) }}</td>
+                  <td class="text-center">{{ number_format($summary['total_paid'], 2) }}</td>
+                  <td class="text-center">{{ number_format($summary['total_balance'], 2) }}</td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+      @endif
+    </div>
+  </div>
 </div>
 @endsection

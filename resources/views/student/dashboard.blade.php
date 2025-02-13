@@ -24,22 +24,25 @@
 @section('content')
     <div class="row g-6">
         <!-- Gamification Card -->
-        <div class="col-md-12 col-xxl-8">
+        <div class="col-12">
             <div class="card">
                 <div class="d-flex align-items-end row">
                     <div class="col-md-6 order-2 order-md-1">
                         <div class="card-body">
-                          <h4 class="card-title mb-4">
-                            Hi <span class="fw-bold">
+                          <p class="mb-0">{{ now()->format('Y-m-d') }}</p>
+                          <p class="mb-0">
+                            {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+                            ({{ \Alkoumi\LaravelHijriDate\Hijri::Date('l d F Y') }})
+                        </p><br>
+                          <h4 class="card-title mb-4 text-end">
+                            <strong> أهلا وسهلا  </strong><br><span class="fw-bold">
                               @if(auth()->user()->student)
                                 {{ auth()->user()->student->full_name }}
                               @else
                                 {{ auth()->user()->name }}
                               @endif
-                            </span> 🎉
+                            </span>🎉
                           </h4>
-                            <p class="mb-0">Ada hutang yang harus dibayar !</p>
-                            <p>Check your new badge in your profile.</p>
                             <a href="javascript:;" class="btn btn-primary">View Profile</a>
                         </div>
                     </div>
@@ -56,78 +59,76 @@
         </div>
         <!--/ Gamification Card -->
 
-        <!-- Overdue Payment -->
-        <div class="col-12 col-xxl-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title mb-1">Overdue Payment</h5>
-                        <p class="card-subtitle mb-0">Number of Payment</p>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-1" type="button"
-                            id="earningReportsTabsId" data-bs-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class="ri-more-2-line ri-20px"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReportsTabsId">
-                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body pb-0">
-                    <ul class="nav nav-tabs nav-tabs-widget pb-6 gap-4 mx-1 d-flex flex-nowrap" role="tablist">
-                        <li class="nav-item">
-                            <a href="javascript:void(0);"
-                                class="nav-link btn active d-flex flex-column align-items-center justify-content-center"
-                                role="tab" data-bs-toggle="tab" data-bs-target="#navs-overdue-id"
-                                aria-controls="navs-overdue-id" aria-selected="true">
-                                <div class="avatar avatar-sm">
-                                    <img src="{{ asset('assets/img/icons/brands/google.png') }}" alt="User">
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="tab-content p-0">
-                    <div class="tab-pane fade show active" id="navs-overdue-id" role="tabpanel">
-                        <div class="table-responsive text-nowrap">
-                            <table class="table border-top">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-transparent border-bottom">Payment Name</th>
-                                        <th class="bg-transparent border-bottom">STATUS</th>
-                                        <th class="text-end bg-transparent border-bottom">Due Date</th>
-                                        <th class="text-end bg-transparent border-bottom">AMOUNT</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table-border-bottom-0">
-                                    <tr>
-                                        <td>Google Workspace</td>
-                                        <td>
-                                            <div class="badge bg-label-danger rounded-pill">Overdue</div>
-                                        </td>
-                                        <td class="text-end">2023-01-15</td>
-                                        <td class="text-end fw-medium">$850</td>
-                                    </tr>
-                                    <tr>
-                                        <td>facebook Adsense</td>
-                                        <td>
-                                            <div class="badge bg-label-danger rounded-pill">Overdue</div>
-                                        </td>
-                                        <td class="text-end">2023-01-10</td>
-                                        <td class="text-end fw-medium">$5</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+        <!-- Student Dashboard Widgets -->
+        <div class="col-12">
+            <div class="row gy-4">
+              <!-- Fully Paid Fees -->
+              <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-body text-center">
+                          <i class="ri-check-double-line ri-4x text-success"></i>
+                          <h5 class="mt-3">Fully Paid Fees</h5>
+                          <h2 class="fw-bold">{{ $fullyPaid }}</h2>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Outstanding Balance -->
+              <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-body text-center">
+                          <i class="ri-money-dollar-box-line ri-4x text-warning"></i>
+                          <h5 class="mt-3">Outstanding Balance</h5>
+                          <h2 class="fw-bold">BND {{ number_format($outstandingBalance, 2) }}</h2>
+                      </div>
+                  </div>
+              </div>
             </div>
         </div>
-        <!--/ Overdue Payment -->
 
+
+        <!-- Overdue Payment -->
+        <div class="col-12">
+          <div class="card">
+              <div class="card-header d-flex align-items-center gap-2">
+                  <i class="ri-time-line text-danger fs-4"></i>
+                  <h5 class="card-title mb-0">Overdue Payment</h5>
+              </div>
+              <div class="tab-content p-0">
+                  <div class="tab-pane fade show active" id="navs-overdue-id" role="tabpanel">
+                      <div class="table-responsive text-nowrap">
+                          <table class="table border-top">
+                              <thead>
+                                  <tr>
+                                      <th class="bg-transparent border-bottom">Fee Category</th>
+                                      <th class="bg-transparent border-bottom">STATUS</th>
+                                      <th class="text-end bg-transparent border-bottom">Due Date</th>
+                                      <th class="text-end bg-transparent border-bottom">Amount Balance</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="table-border-bottom-0">
+                                  @forelse ($outstandingPayments as $payment)
+                                      <tr>
+                                          <td>{{ $payment->feeCategory->fee_category_name }}</td>
+                                          <td>
+                                              <div class="badge bg-label-warning rounded-pill">{{ $payment->feeStatus->fee_status_name }}</div>
+                                          </td>
+                                          <td class="text-end">{{ $payment->due_date->format('Y-m-d') }}</td>
+                                          <td class="text-end fw-medium">BND {{ number_format($payment->amount_balance, 2) }}</td>
+                                      </tr>
+                                  @empty
+                                      <tr>
+                                          <td colspan="4" class="text-center">No overdue payments found.</td>
+                                      </tr>
+                                  @endforelse
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <!--/ Overdue Payment -->
 
     </div>
 @endsection

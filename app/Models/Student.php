@@ -13,17 +13,19 @@ class Student extends Model
     protected $primaryKey = 'student_id';
 
     protected $fillable = [
-        'matric_num',
-        'full_name',
-        'password',
-        'semester_id',
-        'faculty_id',
-        'programme_id',
-        'hostel',
-        'international',
-        'scholarship',
-        'email',
-        'contact_num'
+      'matric_num',
+      'full_name',
+      'current_year',
+      'semester_id',
+      'faculty_id',
+      'programme_id',
+      'status',
+      'hostel',
+      'international',
+      'scholarship',
+      'funding_id',
+      'email',
+      'contact_num',
     ];
 
     // Define relationships
@@ -50,6 +52,11 @@ class Student extends Model
     public function clearanceForms()
     {
         return $this->hasMany(ClearanceForm::class, 'student_id');
+    }
+
+    public function fundingSource()
+    {
+        return $this->belongsTo(FundingSource::class, 'funding_id');
     }
 
 }

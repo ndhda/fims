@@ -30,7 +30,38 @@
 <div class="container">
   <div class="card">
     <div class="card-header">
-    <h4><strong> Clearance Forms</strong></h4>
+      <h4><strong> Clearance Forms</strong></h4>
+    <form method="GET" action="{{ route('admin.clearance-form.index') }}">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="year_id" class="form-label">Filter by Year:</label>
+          <select id="year_id" name="year_id" class="form-control">
+            <option value="">All Years</option>
+            @foreach($years as $year)
+              <option value="{{ $year->year_id }}" {{ $selectedYear == $year->year_id ? 'selected' : '' }}>
+                {{ $year->year_name }}
+              </option>
+            @endforeach
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="session_id" class="form-label">Filter by Academic Session:</label>
+          <select id="session_id" name="session_id" class="form-control">
+            <option value="">All Sessions</option>
+            @foreach($sessions as $session)
+              <option value="{{ $session->session_id }}" {{ $selectedSession == $session->session_id ? 'selected' : '' }}>
+                {{ $session->session_name }}
+              </option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+      </div>
+    </form>
 
     <hr>
 

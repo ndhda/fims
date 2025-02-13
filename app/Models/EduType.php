@@ -5,22 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Level extends Model
+class EduType extends Model
 {
     use HasFactory;
 
-    protected $table = 'edu_level';
+    protected $table = 'edu_type';
 
-    protected $primaryKey = 'level_id';
+    protected $primaryKey = 'id';
 
     public $timestamps = true;
 
     protected $fillable = [
-        'level_name',
+        'edu_type_name',
     ];
 
-    public function programme()
+    public function programmes()
     {
-        return $this->hasMany(Programme::class, 'level_id', 'level_id');
+        return $this->hasMany(Programme::class, 'id');
     }
 }

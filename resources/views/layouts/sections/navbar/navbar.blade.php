@@ -69,7 +69,7 @@
         @endif
 
         <!-- Language -->
-        <li class="nav-item dropdown-language dropdown">
+        {{-- <li class="nav-item dropdown-language dropdown">
             <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow"
                 href="javascript:void(0);" data-bs-toggle="dropdown">
                 <i class='ri-translate-2 ri-22px'></i>
@@ -100,7 +100,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
         <!--/ Language -->
 
         @if ($configData['hasCustomizer'] == true)
@@ -131,7 +131,7 @@
             <!-- / Style Switcher -->
         @endif
 
-        <!-- Quick links  -->
+        {{-- <!-- Quick links  -->
         <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-1 me-xl-0">
             <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow"
                 href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
@@ -444,7 +444,7 @@
                 </li>
             </ul>
         </li>
-        <!--/ Notification -->
+        <!--/ Notification --> --}}
 
         <!-- User -->
         <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -495,7 +495,7 @@
                         </a>
                     </li>
                 @endif
-                <li>
+                {{-- <li>
                     <a class="dropdown-item" href="{{ url('pages/account-settings-billing') }}">
                         <span class="d-flex align-items-center align-middle">
                             <i class="flex-shrink-0 ri-file-text-line ri-22px me-3"></i>
@@ -503,7 +503,7 @@
                             <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger">4</span>
                         </span>
                     </a>
-                </li>
+                </li> --}}
 
                 @if (Auth::User() && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <li>

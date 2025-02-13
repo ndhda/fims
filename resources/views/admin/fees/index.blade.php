@@ -191,6 +191,7 @@
                   <th>Matric Number</th>
                   <th>Student Name</th>
                   <th>Invoice Number</th>
+                  <th>Fee Category</th>
                   <th>Total Amount</th>
                   <th>Amount Balance</th>
                   <th>Status</th>
@@ -204,6 +205,7 @@
                     <td>{{ $fee->student->matric_num ?? 'N/A' }}</td>
                     <td>{{ $fee->student->full_name ?? 'N/A' }}</td>
                     <td>{{ $fee->invoice_num }}</td>
+                    <td>{{ $fee->feeCategory->fee_category_name ?? 'N/A' }}</td>
                     <td class="text-center">${{ number_format($fee->total_amount, 2) }}</td>
                     <td class="text-center">
                         ${{ number_format($fee->total_amount - $fee->amountPaid->sum('amount_paid'), 2) }}

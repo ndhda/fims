@@ -165,6 +165,7 @@ use App\Http\Controllers\Backend\Admin\AdminController;
 use App\Http\Controllers\Backend\Student\StudentController;
 use App\Http\Controllers\Backend\Settings\AuthenticationController  as auth;
 use App\Http\Controllers\Backend\Settings\DashboardController;
+use App\Http\Controllers\Backend\Settings\RegisterController;
 use App\Http\Controllers\Backend\Settings\LoginController;
 use App\Http\Controllers\Backend\Settings\StaffController;
 use App\Http\Middleware\CheckRole;
@@ -190,6 +191,9 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
 // Role-based Dashboard Routes
 Route::middleware(['auth', 'role:1'])->group(function () {
   // Super Admin Routes
@@ -209,6 +213,8 @@ Route::middleware(['auth', 'role:2'])->group(function () {
   Route::put('admin/fees/{fee}', [FeeController::class, 'update'])->name('admin.fees.update');
   Route::delete('admin/fees/{fee}', [FeeController::class, 'destroy'])->name('admin.fees.destroy');
   Route::post('/admin/fees/confirm-payment/{feeId}', [FeeController::class, 'confirmPayment'])->name('admin.fees.confirm-payment');
+  Route::post('/admin/fees/export-pdf', [FeeController::class, 'exportPdf'])->name('admin.fees.export-pdf');
+  Route::post('/admin/fees/export-excel', [FeeController::class, 'exportExcel'])->name('admin.fees.export-excel');
 
   // Bulk Fee Generation
   Route::get('/fees/bulk-create', [BulkFeeController::class, 'showBulkCreateForm'])->name('fees.bulk-create');
@@ -233,8 +239,9 @@ Route::middleware(['auth', 'role:2'])->group(function () {
 
   // Reports
   Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports.index');
-  Route::post('/admin/reports/generate', [AdminReportController::class, 'generate'])->name('admin.reports.generate');
-  Route::get('/admin/reports/export/{type}', [AdminReportController::class, 'export'])->name('admin.reports.export');
+  Route::get('/admin/report/student', [AdminReportController::class, 'studentReport'])->name('admin.report.student');
+  Route::get('/admin/report/student/download', [AdminReportController::class, 'downloadStudentReport'])->name('admin.report.student.download');
+  Route::get('/admin/report/student/{student_id}/view', [AdminReportController::class, 'viewReport'])->name('admin.report.student.view');
 
   // Clearance Form
   Route::get('/admin/clearance-form', [AdminClearanceController::class, 'index'])->name('admin.clearance-form.index');
@@ -264,9 +271,8 @@ Route::middleware(['auth', 'role:3'])->group(function () {
   Route::get('/student/payment/{paymentId}/receipt', [StudentFeeController::class, 'studentGenerateReceipt'])->name('payment.receipt');
 
   // Reports
-  Route::get('/student/reports', [StudentReportController::class, 'index'])->name('student.reports.index');
-  Route::post('/student/reports/generate', [StudentReportController::class, 'generate'])->name('student.reports.generate');
-  Route::get('/student/reports/export/{type}', [StudentReportController::class, 'export'])->name('student.reports.export');
+  Route::get('/student/reports', [StudentReportController::class, 'index'])->name('student.reports');
+  Route::get('/student/report/pdf', [StudentReportController::class, 'generatePDF'])->name('student.report.pdf');
 
   //Clearance Form
   Route::get('/student/clearance-form', [ClearanceFormController::class, 'showForm'])->name('clearance.form');

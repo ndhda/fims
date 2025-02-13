@@ -23,8 +23,12 @@
 @endsection
 
 @section('content')
-<div class="container">
-    <h2>Your Receipts</h2>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title"><strong>My Receipts</strong></h4>
+      <hr>
+
 
     <!-- Year Selection Dropdown -->
     <form method="GET" action="{{ route('student.receipts.index') }}" class="mb-4">
@@ -81,5 +85,7 @@
       </div>
     </div>
     @endif
+    </div>
+  </div>
 </div>
 @endsection

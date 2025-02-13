@@ -12,28 +12,76 @@ use Barryvdh\DomPDF\Facade\PDF;
 
 class StudentReportController extends Controller
 {
-    public function index()
-    {
-        return view('student.reports.index');
-    }
+  public function index()
+  {
+      $studentId = Auth::user()->student_id; // Get the logged-in student's ID
 
-    public function generateStudentReport(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,student_id',
-        ]);
+      // Fetch student report
+      $fees = Fee::with(['feeCategory', 'amountPaid'])
+          ->where('student_id', $studentId)
+          ->get()
+          ->map(function ($fee) {
+              $paidAmount = $fee->amountPaid->sum('amount_paid');
+              return [
+                  '#' => $fee->fee_id,
+                  'date' => $fee->created_at->format('Y-m-d'),
+                  'document_no' => $fee->invoice_num,
+                  'category' => $fee->feeCategory->fee_category_name,
+                  'amount_bnd' => $fee->total_amount,
+                  'paid_bnd' => $paidAmount,
+                  'balance_bnd' => $fee->total_amount - $paidAmount,
+              ];
+          });
 
-        $student = Student::findOrFail($validated['student_id']);
+          // Calculate summary totals
+          $summary = [
+              'total_amount' => $fees->sum('amount_bnd'),
+              'total_paid' => $fees->sum('paid_bnd'),
+              'total_balance' => $fees->sum('balance_bnd'),
+          ];
 
-        // Fetch fee payments for the student
-        $fees = Fee::where('student_id', $student->student_id)->get();
+      return view('student.reports.index', compact('fees', 'summary'));
+  }
 
-        // Calculate total paid, pending balance, and overdue fees
-        $totalPaid = $fees->where('fee_status_id', 3)->sum('total_amount'); // Paid status
-        $pendingBalance = $fees->where('fee_status_id', 2)->sum('amount_balance'); // Pending status
-        $overdueFees = $fees->where('due_date', '<', now())->where('fee_status_id', 1)->sum('amount_balance'); // Unpaid status and overdue
+  public function generatePDF()
+  {
+      $studentId = Auth::user()->student_id;
 
-        return view('student.fees.report', compact('fees', 'totalPaid', 'pendingBalance', 'overdueFees'));
-    }
+      // Fetch student information
+        $student = Student::with([
+          'faculty',
+          'programme',
+          'programme.eduMode',
+          'semester',
+          'fundingSource'
+        ])->findOrFail($studentId);
+
+      // Fetch fees and transactions
+      $transactions = Fee::with(['feeCategory', 'amountPaid'])
+          ->where('student_id', $studentId)
+          ->get()
+          ->map(function ($fee) {
+              $paidAmount = $fee->amountPaid->sum('amount_paid');
+              return [
+                  'date' => $fee->created_at->format('Y-m-d'),
+                  'document' => $fee->invoice_num,
+                  'description' => $fee->feeCategory->fee_category_name,
+                  'charges' => $fee->total_amount,
+                  'payments' => $paidAmount,
+                  'balance' => $fee->total_amount - $paidAmount,
+              ];
+          });
+
+      // Calculate summary
+      $summary = [
+          'charges' => $transactions->sum('charges'),
+          'payments' => $transactions->sum('payments'),
+          'balance' => $transactions->sum('balance'),
+      ];
+
+      // Generate PDF
+      $pdf = PDF::loadView('student.reports.pdf', compact('student', 'transactions', 'summary'));
+      return $pdf->stream('student_report.pdf');
+  }
 
 }

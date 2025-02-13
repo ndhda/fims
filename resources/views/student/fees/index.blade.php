@@ -24,11 +24,11 @@
 
 @section('content')
     <!-- Student Payment Overview Widgets -->
-    <div class="card mb-6">
+    <div class="card mb-8">
       <div class="card-widget-separator-wrapper">
         <div class="card-body card-widget-separator">
           <div class="row gy-4 gy-sm-1">
-            <div class="col-sm-6 col-lg-3">
+            <div class="col-12 col-sm-6 col-lg-6">
               <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
                 <div>
                   <h4 class="mb-0">{{ $totalFees }}</h4>
@@ -42,7 +42,7 @@
               </div>
               <hr class="d-none d-sm-block d-lg-none me-6">
             </div>
-            <div class="col-sm-6 col-lg-3">
+            <div class="col-12 col-sm-6 col-lg-6">
               <div class="d-flex justify-content-between align-items-start">
                 <div>
                   <h4 class="mb-0">${{ number_format($outstandingAmount, 2) }}</h4>

@@ -59,7 +59,7 @@
                   </a>
               </li>
               <li class="menu-item">
-                  <a href="{{ route('student.reports.index') }}" class="menu-link">
+                  <a href="{{ route('student.reports') }}" class="menu-link">
                       <div>Report</div>
                   </a>
               </li>
@@ -74,12 +74,5 @@
           </a>
       </li>
 
-      <!-- Profile -->
-      <li class="menu-item">
-          <a href="#" class="menu-link">
-              <i class="menu-icon tf-icons bx bx-user"></i>
-              <div>Profile</div>
-          </a>
-      </li>
   </ul>
 </aside>

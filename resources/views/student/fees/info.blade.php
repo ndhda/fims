@@ -49,9 +49,16 @@
         <div>
             <div class="mt-3">
             @if(session('payment_method') == 'online_payment')
-                <img src="{{ asset('assets/img/info/bibd_online.jpg') }}" alt="Online Payment Instructions" class="img-fluid">
+                <div class="d-flex justify-content-center">
+                    <img src="{{ asset('assets/img/info/bibd_online2.jpg') }}" alt="Online Payment Instructions" class="img-fluid" style="width: 80%;">
+                </div>
+                <div class="d-flex justify-content-center">
+                    <img src="{{ asset('assets/img/info/bibd_online.png') }}" alt="Counter Payment Instructions" class="img-fluid" style="width: 80%;">
+                </div>
             @elseif(session('payment_method') == 'counter_payment')
-                <img src="{{ asset('assets/img/info/unissa_receipt.jpg') }}" alt="Counter Payment Instructions" class="img-fluid">
+              <div class="d-flex justify-content-center">
+                <img src="{{ asset('assets/img/info/counter.jpg') }}" alt="Counter Payment Instructions" class="img-fluid" style="width: 80%;">
+              </div>
             @endif
             </div>
         </div>
