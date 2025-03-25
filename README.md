@@ -1,3 +1,136 @@
+# **Finance Management System (FiMS)**  
+
+FiMS is a web-based **financial management system** designed to help universities manage student fees, payment verification, financial reporting, and clearance form submissions.  
+
+This system was developed during an **internship** as part of a software engineering project.  
+
+---
+
+## **📌 Features**  
+
+✅ **Login Authentication** – Secure login for students and admins.  
+✅ **Student Fee Management** – Track and manage student fee payments.  
+✅ **Payment Verification** – Verify submitted payments through the system.  
+✅ **Financial Reporting** – Generate reports for financial analysis.  
+✅ **Clearance Form Submission** – Allow students to submit clearance requests.  
+
+---
+
+## **⚙️ Installation Guide**  
+
+### **🔹 Prerequisites**  
+Ensure you have the following installed:  
+- **PHP 8.x**  
+- **MySQL/MariaDB**  
+- **Apache or Nginx**  
+- **Composer** (PHP dependency manager)  
+- **Node.js & npm** (for frontend dependencies)  
+
+### **🔹 Setup Steps**  
+
+1️⃣ **Clone the repository:**  
+   ```bash
+   git clone https://github.com/yourusername/FiMS.git
+   cd FiMS
+   ```  
+   
+2️⃣ **Install backend dependencies:**  
+   ```bash
+   composer install
+   ```  
+
+3️⃣ **Install frontend dependencies:**  
+   ```bash
+   npm install
+   ```  
+
+4️⃣ **Set up the environment file:**  
+   ```bash
+   cp .env.example .env
+   ```  
+   - Configure **database credentials** inside `.env`:  
+     ```env
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=fims_db
+     DB_USERNAME=root
+     DB_PASSWORD=yourpassword
+     ```  
+
+5️⃣ **Generate the application key:**  
+   ```bash
+   php artisan key:generate
+   ```  
+
+6️⃣ **Run database migrations and seed sample data:**  
+   ```bash
+   php artisan migrate --seed
+   ```  
+
+7️⃣ **Start the development server:**  
+   ```bash
+   php artisan serve
+   ```  
+
+8️⃣ **Access the system at:**  
+   👉 `http://localhost:8000`  
+
+---
+
+## **🖥️ Usage**  
+
+### **🔹 Admin Dashboard**  
+- Manage student fee records.  
+- Approve or reject payment verifications.  
+- Generate financial reports.  
+
+### **🔹 Student Portal**  
+- View personal fee status.  
+- Submit payment receipts.  
+- Request clearance for graduation.  
+
+---
+
+## **🔧 Technologies Used**  
+
+| Stack | Technology |
+|--------|-------------|
+| **Backend** | Laravel (PHP Framework) |
+| **Frontend** | Blade, Bootstrap, JavaScript |
+| **Database** | MySQL |
+| **Authentication** | Laravel Sanctum (if API-based) |
+
+---
+
+## **🤝 Contributing**  
+
+Contributions are welcome! If you'd like to improve this project:  
+1. Fork the repository.  
+2. Create a new branch.  
+3. Make your changes and push them.  
+4. Submit a pull request!  
+
+---
+
+## **📜 License**  
+
+This project is licensed under the **MIT License** – feel free to use and modify it.  
+
+---
+
+## **📩 Contact**  
+
+For any questions or collaboration, feel free to reach out:  
+📧 **Email**: your@email.com  
+🔗 **GitHub**: [ndhda](https://github.com/ndhda)  
+🔗 **LinkedIn**: [Nur Nadira Huda](https://linkedin.com/in/nadirahuda26)  
+
+---
+
+🚀 **FiMS – Making financial management easier!** 🚀  
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
