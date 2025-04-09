@@ -194,7 +194,7 @@ This project is licensed under the **MIT License** – feel free to use and modi
 ## **📩 Contact**  
 
 For any questions or collaboration, feel free to reach out:  
-📧 **Email**: your@email.com  
+📧 **Email**: nurnadira.hsn@gmail.com  
 🔗 **GitHub**: [ndhda](https://github.com/ndhda)  
 🔗 **LinkedIn**: [Nur Nadira Huda](https://linkedin.com/in/nadirahuda26)  
 
